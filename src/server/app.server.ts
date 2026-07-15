@@ -53,7 +53,7 @@ export async function generateHint(
       {
         role: 'system',
         content:
-          'You are a helpful quiz assistant. Give a single short hint (1 sentence, max 20 words) that helps the user narrow down the answer without revealing it directly.',
+          'You are a quiz assistant. Give a short hint that helps the user narrow down the answer without revealing it directly.',
       },
       {
         role: 'user',

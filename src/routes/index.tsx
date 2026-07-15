@@ -63,7 +63,7 @@ function RouteComponent() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background px-4">
+    <div className="relative min-h-screen flex items-center justify-center bg-background px-4">
       {/* subtle radial glow behind the card */}
       <div className="pointer-events-none fixed inset-0 flex items-center justify-center">
         <div className="h-125 w-125 rounded-full bg-primary/10 blur-[120px]" />
@@ -79,7 +79,7 @@ function RouteComponent() {
             <span className="text-primary ml-3">Generator</span>
           </CardTitle>
           <CardDescription className="text-sm mt-1">
-            Challenge your knowledge on any topic.
+            Challenge your knowledge on any topic with AI.
           </CardDescription>
         </CardHeader>
 
@@ -206,48 +206,44 @@ function RouteComponent() {
           </form>
         </CardContent>
       </Card>
+
+      {/* Footer */}
+      <p className="absolute bottom-4 text-xs text-muted-foreground/60 flex items-center gap-2">
+        Created by{' '}
+        <a
+          href="https://divyanshsoni.dev"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="font-medium underline text-muted-foreground hover:text-primary transition-colors"
+        >
+          Divyansh Soni
+        </a>
+        <span>·</span>
+        <a
+          href="https://github.com/placeholder/ai-quiz-generator"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1 font-medium text-muted-foreground hover:text-primary transition-colors"
+        >
+          <GitIcon />
+          Star on GitHub
+        </a>
+      </p>
     </div>
   )
 }
 
-// const placeholderQuiz = [
-//   {
-//     question: 'Which country has the largest population?',
-//     options: ['India', 'United States', 'Indonesia', 'Pakistan'],
-//     answer: 0,
-//     difficultyLevel: 'easy',
-//     explanation:
-//       'India surpasses all other countries with over 1.4 billion people.',
-//   },
-//   {
-//     question: 'What is the capital city of Canada?',
-//     options: ['Toronto', 'Ottawa', 'Vancouver', 'Montreal'],
-//     answer: 1,
-//     difficultyLevel: 'easy',
-//     explanation: "Ottawa is Canada's federal capital, located in Ontario.",
-//   },
-//   {
-//     question: 'Which of these countries is NOT a member of the European Union?',
-//     options: ['Switzerland', 'Austria', 'Denmark', 'Slovakia'],
-//     answer: 0,
-//     difficultyLevel: 'medium',
-//     explanation:
-//       'Switzerland is not an EU member, though it has many bilateral agreements.',
-//   },
-//   // {
-//   //   question: 'Mount Everest is located in which mountain range?',
-//   //   options: ['Andes', 'Rockies', 'Alps', 'Himalayas'],
-//   //   answer: 3,
-//   //   difficultyLevel: 'medium',
-//   //   explanation:
-//   //     'Mount Everest is part of the Himalaya range on the Nepal–China border.',
-//   // },
-//   // {
-//   //   question: 'Which Asian country has the highest GDP per capita as of 2023?',
-//   //   options: ['Singapore', 'Japan', 'South Korea', 'India'],
-//   //   answer: 0,
-//   //   difficultyLevel: 'hard',
-//   //   explanation:
-//   //     'Singapore leads Asia in GDP per capita due to its advanced services economy.',
-//   // },
-// ]
+function GitIcon() {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="13"
+      height="13"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden="true"
+    >
+      <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.385-1.335-1.755-1.335-1.755-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 21.795 24 17.295 24 12c0-6.63-5.37-12-12-12z" />
+    </svg>
+  )
+}

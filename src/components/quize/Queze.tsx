@@ -53,7 +53,12 @@ export default function QuizGame({
     text: string | null
     loading: boolean
     success: boolean
-  }>({ left: Math.round(questions.length * 0.3), text: null, loading: false, success: false })
+  }>({
+    left: Math.round(questions.length * 0.3),
+    text: null,
+    loading: false,
+    success: false,
+  })
   const [fiftyFifty, setFiftyFifty] = useState<{
     left: number
     eliminated: number[]
@@ -63,7 +68,7 @@ export default function QuizGame({
   const [startedAt] = useState(() => Date.now())
   const [showOptions, setShowOptions] = useState(false)
   const speech = useSpeech()
-  const firstQuizeRead = useRef(false)
+  const isQuizeReadRef = useRef(false)
   const { autoSpeech, autoNext } = useSettings()
 
   const question = quize[currentQuestionIndex]
@@ -84,11 +89,12 @@ export default function QuizGame({
     if (isCorrect) {
       setStreak((s) => s + 1)
       sounds.correct()
-      if (autoSpeech) speech.speak('Correct Answer. ' + question.explanation)
+      if (autoSpeech && !autoNext) {
+        speech.speak('Correct Answer. ' + question.explanation)
+      }
     } else {
       setStreak(0)
-      if (autoSpeech)
-        speech.speak('Incorrect.' + question.explanation)
+      if (autoSpeech) speech.speak('Incorrect.' + question.explanation)
       sounds.wrong()
     }
   }
@@ -99,8 +105,10 @@ export default function QuizGame({
 
   const nextQuestion = () => {
     if (hintControllerRef.current) hintControllerRef.current.abort()
-      speech.stop()
+    speech.stop()
     setCurrentQuestionIndex(currentQuestionIndex + 1)
+    isQuizeReadRef.current = false
+    window.scrollTo({ top: 0, behavior: 'smooth' })
     if (currentQuestionIndex === quize.length - 1) {
       const scorePct = Math.round(
         (quize.filter((q) => q.isCorrect).length / quize.length) * 100,
@@ -128,13 +136,6 @@ export default function QuizGame({
       resetHint()
       setFiftyFifty((f) => ({ ...f, eliminated: [] }))
       document.getElementById('question-label')?.focus()
-      if (autoSpeech)
-        speech.speak(
-          `${nextQuestionn.question}. ${nextQuestionn.options.join(', ')}`,
-        )
-        // speech.speak(
-        //   `${nextQuestionn.question}`,
-        // )
     }
   }
 
@@ -153,21 +154,32 @@ export default function QuizGame({
 
   const handleFiftyFifty = () => {
     if (fiftyFifty.left === 0 || !question || question.isAnswered) return
-    if (!confirm('Use 50/50 lifeline? This will remove 2 wrong options. You only have 1 use.')) return
+    if (
+      !confirm(
+        'Use 50/50 lifeline? This will remove 2 wrong options. You only have 1 use.',
+      )
+    )
+      return
     const wrongIndices = ([0, 1, 2, 3] as number[]).filter(
       (i) => i !== question.answer,
     )
     // shuffle wrong options and pick 2 to eliminate
     const shuffled = wrongIndices.sort(() => Math.random() - 0.5)
     const toEliminate = shuffled.slice(0, 2)
-    setFiftyFifty(p => ({ left: p.left - 1, eliminated: toEliminate }))
+    setFiftyFifty((p) => ({ left: p.left - 1, eliminated: toEliminate }))
     sounds.fiftyFifty()
   }
 
-  const handleHint = async () => {
+  const handleHintClick = async () => {
     if (!question || hint.left === 0 || hint.loading) return
-    if (!confirm(`Use AI Hint lifeline? You have ${hint.left} use${hint.left === 1 ? '' : 's'} remaining.`)) return
+    if (
+      !confirm(
+        `Use AI Hint lifeline? You have ${hint.left} use${hint.left === 1 ? '' : 's'} remaining.`,
+      )
+    )
+      return
     if (hintControllerRef.current) hintControllerRef.current.abort()
+    sounds.whoosh()
     const controller = new AbortController()
     hintControllerRef.current = controller
     setHint((h) => ({ ...h, loading: true }))
@@ -197,8 +209,6 @@ export default function QuizGame({
     }
   }
 
-  const { speak, stop } = speech
-
   useEventListener('keydown', (e) => {
     if (isQuizDone) return
     const keyMap: Record<string, number> = { a: 0, b: 1, c: 2, d: 3 }
@@ -209,12 +219,10 @@ export default function QuizGame({
   })
 
   useEffect(() => {
-    if (firstQuizeRead.current || !question) return
-    firstQuizeRead.current = true
-    if (autoSpeech)
-      speak(`${question.question}. ${question.options.join(', ')}`)
-    return () => stop()
-  }, [question, speak, stop, autoSpeech])
+    if (!question || !autoSpeech || isQuizeReadRef.current) return
+    speech.speak(`${question.question}. ${question.options.join(', ')}`)
+    isQuizeReadRef.current = true
+  }, [question, speech, autoSpeech])
 
   if (isQuizDone || !question) {
     return (
@@ -223,19 +231,19 @@ export default function QuizGame({
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 animate-in">
-      <div className=" max-w-4xl mx-auto">
+    <div className="min-h-screen flex items-center py-6 px-4 animate-in">
+      <div className=" max-w-4xl mx-auto w-full">
         <Progress
-          className="col-span-3"
+          className=""
           value={
             currentQuestionIndex === 0
               ? 0
               : ((currentQuestionIndex + 1) / questions.length) * 100
           }
         />
-        <div className="col-span-2 flex justify-between gap-4 items-center mt-2 mb-4">
+        <div className="flex flex-col gap-2 md:flex-row md:justify-between md:gap-4 md:items-center mt-2 mb-4">
           <QuestionDots questions={quize} currentIndex={currentQuestionIndex} />
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 justify-between md:justify-end">
             {streak >= 3 && (
               <motion.div
                 key={streak}
@@ -246,7 +254,7 @@ export default function QuizGame({
                 🔥 {streak}x
               </motion.div>
             )}
-            <div className="text-sm text-muted-foreground">
+            <div className="text-sm text-muted-foreground truncate">
               {currentQuestionIndex + 1} / {questions.length}
             </div>
             <QuizSettingsPopover />
@@ -269,12 +277,12 @@ export default function QuizGame({
 
         <div
           key={currentQuestionIndex}
-          style={{ gridTemplateColumns: '1.3fr 1fr' }}
-          className="col-span-2 gap-4 grid w-full"
+          className="gap-4 grid w-full grid-cols-1 md:grid-cols-[1.3fr_1fr]"
         >
           <motion.div
-            initial={{ scale: 0.9 }}
-            animate={{ scale: 1, transition: { duration: 0.25 } }}
+            initial={{ scale: 0.7, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1, transition: { duration: 0.25 } }}
+            className="w-full"
           >
             <Card className="p-6 gap-2 w-full">
               <div className="mt-2" key={currentQuestionIndex}>
@@ -350,7 +358,10 @@ export default function QuizGame({
                     }}
                     key={index}
                     type="button"
-                    disabled={question.isAnswered || fiftyFifty.eliminated.includes(index)}
+                    disabled={
+                      question.isAnswered ||
+                      fiftyFifty.eliminated.includes(index)
+                    }
                     onClick={() => handleSelectOption(index)}
                     className={cn(
                       'border flex font-medium gap-2 items-center text-start cursor-pointer hover:bg-gray-950/80 hover:scale-101 active:scale-95 transition-[transform,background-color,border-color,color,opacity] duration-150 py-3 px-3 rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background',
@@ -393,8 +404,13 @@ export default function QuizGame({
           </motion.div>
 
           <motion.div
-            initial={{ scale: 0.9, opacity: 0.5 }}
-            animate={{ scale: 1, opacity: 1, transition: { duration: 0.25 } }}
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{
+              scale: 1,
+              opacity: 1,
+              transition: { duration: 0.25, delay: 0.2 },
+            }}
+            className="w-full"
           >
             <Card className="p-6 h-max w-full">
               {!question.isAnswered && (
@@ -414,7 +430,7 @@ export default function QuizGame({
                     <button
                       type="button"
                       disabled={hint.left === 0 || hint.loading}
-                      onClick={handleHint}
+                      onClick={handleHintClick}
                       className={cn(
                         'flex w-full items-center gap-2 rounded-lg border px-3 py-2.5 text-sm font-medium transition-colors',
                         hint.left > 0

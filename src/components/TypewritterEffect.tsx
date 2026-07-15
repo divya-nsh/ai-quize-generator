@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useEffectEvent } from 'react'
 
 export function TypewriterText({
   text,
@@ -10,7 +10,12 @@ export function TypewriterText({
   const [displayed, setDisplayed] = useState('')
   const [done, setDone] = useState(false)
 
+  const handleDoneEvent = useEffectEvent(() => {
+    onDone?.()
+  })
+
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setDisplayed('')
     setDone(false)
     let i = 0
@@ -20,7 +25,7 @@ export function TypewriterText({
       if (i >= text.length) {
         clearInterval(interval)
         setDone(true)
-        onDone?.()
+        handleDoneEvent()
       }
     }, 22)
     return () => clearInterval(interval)
