@@ -378,7 +378,7 @@ export default function QuizGame({
                       question.isAnswered &&
                         !question.isCorrect &&
                         index === question.userAnswer &&
-                        'border-destructive text-foreground bg-destructive/10',
+                        'border-destructive text-foreground bg-destructive/10 animate-shake',
                       fiftyFifty.eliminated.includes(index) &&
                         'cursor-not-allowed pointer-events-none',
                     )}
