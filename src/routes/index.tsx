@@ -217,7 +217,7 @@ function RouteComponent() {
         </a>
         <span>·</span>
         <a
-          href="https://github.com/placeholder/ai-quiz-generator"
+          href="https://github.com/divya-nsh/ai-quize-generator"
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center gap-1 font-medium text-muted-foreground hover:text-primary transition-colors"
