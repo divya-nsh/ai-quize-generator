@@ -17,7 +17,12 @@ export const Route = createRootRoute({
         content: 'width=device-width, initial-scale=1',
       },
       {
-        title: 'TanStack Start Starter',
+        title: 'AI Quiz Generator',
+      },
+      {
+        name: 'description',
+        content:
+          'A fun AI quiz generator app to challenge yourself on any topic and see how well you know it!',
       },
     ],
     links: [
