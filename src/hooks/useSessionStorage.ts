@@ -1,22 +1,29 @@
-import { useState, useEffect, startTransition } from 'react'
+import { useState, useEffect } from 'react'
 
 function useSessionStorage<T>(key: string, initialValue: T) {
-  const [value, setValue] = useState<T>(initialValue)
-
-  useEffect(() => {
+  const [value, setValue] = useState<T>(() => {
     try {
-      const storedValue = JSON.parse(
-        sessionStorage.getItem(key) || 'null',
-      ) as T | null
-      if (storedValue) {
-        startTransition(() => {
-          setValue(storedValue)
-        })
-      }
+      const storedValue = JSON.parse(sessionStorage.getItem(key) || 'null') as T
+      return storedValue
     } catch (error) {
-      console.error('Error reading sessionStorage key:', key, error)
+      return initialValue
     }
-  }, [key])
+  })
+
+  // useEffect(() => {
+  //   try {
+  //     const storedValue = JSON.parse(
+  //       sessionStorage.getItem(key) || 'null',
+  //     ) as T | null
+  //     if (storedValue) {
+  //       startTransition(() => {
+  //         setValue(storedValue)
+  //       })
+  //     }
+  //   } catch (error) {
+  //     console.error('Error reading sessionStorage key:', key, error)
+  //   }
+  // }, [key])
 
   useEffect(() => {
     try {

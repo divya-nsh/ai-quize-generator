@@ -20,6 +20,7 @@ import QuizGame from '#/components/quize/Queze'
 import { useSettings } from '#/context/settings'
 import useSessionStorage from '#/hooks/useSessionStorage'
 import { Spinner } from '#/components/ui/spinner'
+import { useTheme } from '#/components/theme-provider'
 
 export const Route = createFileRoute('/')({
   component: RouteComponent,
@@ -36,8 +37,7 @@ function RouteComponent() {
     totalQuestions: 10,
   })
   const { autoSpeech, autoNext, setAutoSpeech, setAutoNext } = useSettings()
-
-  const charsLeft = MAX_TOPIC_LENGTH - formData.topic.length
+  const { theme, toggleTheme } = useTheme()
 
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -64,15 +64,22 @@ function RouteComponent() {
 
   return (
     <div className="relative min-h-screen flex items-center justify-center bg-background px-4">
+      <button
+        onClick={toggleTheme}
+        aria-label="Toggle theme"
+        className="fixed top-4 right-4 z-50 rounded-full p-2 border border-border bg-background hover:bg-accent transition-colors"
+      >
+        {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
+      </button>
       {/* subtle radial glow behind the card */}
-      <div className="pointer-events-none fixed inset-0 flex items-center justify-center">
+      <div className="pointer-events-none bg-bac fixed inset-0 flex items-center justify-center">
         <div className="h-125 w-125 rounded-full bg-primary/10 blur-[120px]" />
       </div>
 
       <Card className="relative max-w-lg w-full shadow-xl border-border/60 [--card-spacing:--spacing(8)]">
         <CardHeader className="pb-2">
           <span className="inline-flex items-center gap-1.5 text-[10px] font-bold tracking-[0.2em] uppercase text-primary bg-primary/10 border border-primary/20 rounded-full px-3 py-1 w-max">
-            <span>✦</span> AI Powered
+            <span>✨</span> AI Powered
           </span>
           <CardTitle className="text-4xl lg:text-5xl font-black mt-2">
             Quiz
@@ -86,21 +93,11 @@ function RouteComponent() {
         <CardContent className="-mt-2">
           <form className="grid gap-7" onSubmit={handleSubmit}>
             {/* Topic */}
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-semibold text-foreground">
-                  Topic
-                </span>
-                <span
-                  className={`text-xs tabular-nums transition-colors ${
-                    charsLeft <= 20
-                      ? 'text-destructive'
-                      : 'text-muted-foreground'
-                  }`}
-                >
-                  {charsLeft} / {MAX_TOPIC_LENGTH}
-                </span>
-              </div>
+            <label className="space-y-1">
+              <span className="text-sm pl-0.5 block font-semibold text-foreground">
+                Topic
+              </span>
+
               <Textarea
                 required
                 value={formData.topic}
@@ -112,7 +109,7 @@ function RouteComponent() {
                 rows={3}
                 className="resize-none"
               />
-            </div>
+            </label>
 
             {/* Number of questions */}
             <div className="space-y-3">
@@ -208,7 +205,7 @@ function RouteComponent() {
       </Card>
 
       {/* Footer */}
-      <p className="absolute bottom-4 text-xs text-muted-foreground/60 flex items-center gap-2">
+      <p className="absolute bottom-4 text-xs text-muted-foreground flex items-center gap-2">
         Created by{' '}
         <a
           href="https://divyanshsoni.dev"
@@ -230,6 +227,52 @@ function RouteComponent() {
         </a>
       </p>
     </div>
+  )
+}
+
+function MoonIcon() {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+    </svg>
+  )
+}
+
+function SunIcon() {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <circle cx="12" cy="12" r="5" />
+      <line x1="12" y1="1" x2="12" y2="3" />
+      <line x1="12" y1="21" x2="12" y2="23" />
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+      <line x1="1" y1="12" x2="3" y2="12" />
+      <line x1="21" y1="12" x2="23" y2="12" />
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+    </svg>
   )
 }
 
