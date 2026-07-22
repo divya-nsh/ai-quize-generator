@@ -133,7 +133,7 @@ export default function QuizGame({
       const nextQuestionn = quize[currentQuestionIndex + 1]
       if (!nextQuestionn) return
       setShowOptions(false)
-      sounds.whoosh()
+      // sounds.whoosh()
       resetHint()
       setFiftyFifty((f) => ({ ...f, eliminated: [] }))
       document.getElementById('question-label')?.focus()
@@ -659,7 +659,7 @@ function SummaryScore({
           {/* Header */}
           <div className="flex flex-col items-center gap-3">
             <h2 className="text-2xl font-bold">
-              {getScoreIcon(pct)} You Score {pct}%
+              {getScoreIcon(pct)} Score {pct}%
             </h2>
             <span
               className={cn(

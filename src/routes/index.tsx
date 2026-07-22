@@ -59,11 +59,19 @@ function RouteComponent() {
   }
 
   if (quize) {
-    return <QuizGame questions={quize} onNewQuiz={() => setQuize(null)} />
+    return (
+      <QuizGame
+        questions={quize}
+        onNewQuiz={() => {
+          setFormData((p) => ({ ...p, topic: '' }))
+          setQuize(null)
+        }}
+      />
+    )
   }
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center bg-background px-4">
+    <div className="relative min-h-screen py-4 flex-col flex items-center justify-center bg-background px-4">
       <button
         onClick={toggleTheme}
         aria-label="Toggle theme"
@@ -104,7 +112,7 @@ function RouteComponent() {
                 onChange={(e) =>
                   setFormData({ ...formData, topic: e.target.value })
                 }
-                placeholder="e.g. React hooks, World War II, Black holes…"
+                placeholder="e.g. Basic Science, Computer Science, Javascript"
                 maxLength={MAX_TOPIC_LENGTH}
                 rows={3}
                 className="resize-none"
@@ -149,7 +157,7 @@ function RouteComponent() {
                   className="text-sm text-muted-foreground"
                 >
                   Auto speech
-                  <span className="block text-xs text-muted-foreground/60">
+                  <span className="hidden md:block text-xs text-muted-foreground/60">
                     Read questions &amp; answers aloud
                   </span>
                 </Label>
@@ -165,7 +173,7 @@ function RouteComponent() {
                   className="text-sm text-muted-foreground"
                 >
                   Auto next
-                  <span className="block text-xs text-muted-foreground/60">
+                  <span className="hidden md:block text-xs text-muted-foreground/60">
                     Advance automatically on correct answer
                   </span>
                 </Label>
@@ -205,7 +213,7 @@ function RouteComponent() {
       </Card>
 
       {/* Footer */}
-      <p className="absolute bottom-4 text-xs text-muted-foreground flex items-center gap-2">
+      <footer className="mt-5 text-xs text-muted-foreground flex items-center gap-2">
         Created by{' '}
         <a
           href="https://divyanshsoni.dev"
@@ -225,7 +233,7 @@ function RouteComponent() {
           <GitIcon />
           Star on GitHub
         </a>
-      </p>
+      </footer>
     </div>
   )
 }
